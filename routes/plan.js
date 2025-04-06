@@ -1,0 +1,15 @@
+const PlanController = require("../controllers/PlanController");
+const express = require("express");
+const router = express.Router();
+const auth = require("../Middleware/Auth");
+const role = require("../middleware/Role");
+
+
+router.use(auth);
+router.post('/plan', PlanController.list);
+
+router.use(role(["admin"]));
+router.post('/plan/create-or-update', PlanController.createOrUpdate);
+router.delete('/plan/delete/:_id', PlanController.delete);
+
+module.exports = router;

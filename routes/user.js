@@ -1,0 +1,13 @@
+const express = require("express");
+const UserController = require("../controllers/UserController");
+const router = express.Router();
+const auth = require("../Middleware/Auth");
+
+router.use(auth);
+
+router.post('/new-user', UserController.newUser);
+router.post('/daily-user', UserController.dailyUser);
+router.post('/matches-user', UserController.matchesUser);
+router.post('/decrease-limit', UserController.decreaseLimit);
+
+module.exports = router;
