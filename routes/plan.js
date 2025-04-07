@@ -1,7 +1,6 @@
 const PlanController = require("../controllers/PlanController");
 const express = require("express");
 const router = express.Router();
-const auth = require("../Middleware/Auth");
 const role = require("../middleware/Role");
 
 
