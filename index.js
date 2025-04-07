@@ -20,6 +20,9 @@ app.use(express.json());
 app.use('/api', authRoutes)
 app.use('/api', userRoutes)
 app.use('/api', planRoutes)
+app.get('/', function (request, response) {
+    response.send("API Working Properly");
+})
 // app.get('/api/register', function (request, response){
 //     const {first_name, last_name, email, password} = request.body;
 //     console.log(first_name, last_name, email, password,"::first_name-last_name");
