@@ -8,6 +8,7 @@ router.use(auth);
 router.post('/new-user', UserController.newUser);
 router.post('/daily-user', UserController.dailyUser);
 router.post('/matches-user', UserController.matchesUser);
+router.post('/near-me', UserController.nearMe);
 router.post('/decrease-limit', UserController.decreaseLimit);
 
 module.exports = router;

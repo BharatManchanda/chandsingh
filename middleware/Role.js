@@ -37,6 +37,8 @@ require('dotenv').config()
 const role = (roles) => {
     return async (req, res, next) => {
         try {
+            console.log(roles,"::roles");
+            
             const token = req.headers.authorization;
             if (!token) {
                 return res.status(401).json({

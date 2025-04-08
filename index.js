@@ -1,10 +1,11 @@
 const express = require('express')
 const mongodbConnect = require('./config/connect/db')
 const app = express()
-const port = 3000
+const port = 8080
 const authRoutes = require("./routes/auth")
 const userRoutes = require("./routes/user")
 const planRoutes = require("./routes/plan")
+const friendRequestRoutes = require("./routes/friendRequest")
 // app.use(bodyParser.json()) // for parsing application/json
 // console.log(bodyParser,"::bodyParser");
 
@@ -19,6 +20,7 @@ app.use(express.json());
 
 app.use('/api', authRoutes)
 app.use('/api', userRoutes)
+app.use('/api', friendRequestRoutes)
 app.use('/api', planRoutes)
 app.get('/', function (request, response) {
     response.send("API Working Properly");
