@@ -2,16 +2,14 @@ const mongoose = require("mongoose");
 
 const ProfileViewSchema = mongoose.Schema({
     userId: {
-        type: String,
-        required: false,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
     },
     viewerId: {
-        type: String,
-        required: false,
-    },
-    viewedAt: {
-        type: Date,
-        required: false,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
     },
 },{
     timestamps: true,

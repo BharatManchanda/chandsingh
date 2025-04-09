@@ -210,7 +210,7 @@ class UserController {
             
             return response.json({
                 "status": true,
-                "message": "New user fetched successfully.",
+                "message": "Recently user fetched successfully.",
                 "data": {
                     totalCount,
                     totalPages,
