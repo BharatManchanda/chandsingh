@@ -15,5 +15,5 @@ const ProfileViewSchema = mongoose.Schema({
     timestamps: true,
 })
 
-const ProfileView = mongoose.model(ProfileView, ProfileViewSchema);
+const ProfileView = mongoose.model('ProfileView', ProfileViewSchema);
 module.exports = ProfileView;
