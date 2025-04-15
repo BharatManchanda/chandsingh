@@ -81,6 +81,44 @@ class FriendRequestController {
             });
         }
     }
+
+    static async getFriendRequestDeclined (request, response) {
+        try {
+            const friendRequest = await FriendRequest.find({
+                receiverId: request.user._id,
+                status : "decline",
+            });
+            return response.json({
+                status: true,
+                message: "Friend request fetched successfully.",
+                data: friendRequest,
+            });
+        } catch (error) {
+            return response.json({
+                status: false,
+                message: error,
+            });
+        }
+    }
+
+    static async getFriendRequestAccepted (request, response) {
+        try {
+            const friendRequest = await FriendRequest.find({
+                receiverId: request.user._id,
+                status : "accept",
+            });
+            return response.json({
+                status: true,
+                message: "Friend request fetched successfully.",
+                data: friendRequest,
+            });
+        } catch (error) {
+            return response.json({
+                status: false,
+                message: error,
+            });
+        }
+    }
 }
 
 module.exports = FriendRequestController;
