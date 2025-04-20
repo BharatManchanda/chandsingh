@@ -2,13 +2,13 @@ const User = require("../models/User")
 const jwt = require("jsonwebtoken");
 
 class UserController {
-    static async newUser (request, response) {
+    static async newUser (req, res) {
         try {
-            const user = await UserController.getMe(request);
+            const user = await UserController.getMe(req);
             const gender = user.gender == "male" ? "female" : "male";
 
-            const limit = parseInt(request.query.limit) || 10;
-            const page = parseInt(request.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const page = parseInt(req.query.page) || 1;
 
             const totalCount = await User.countDocuments({
                 gender,
@@ -25,7 +25,7 @@ class UserController {
             .sort({createdAt: -1}).limit(limit).skip(skip);
 
             
-            return response.json({
+            return res.json({
                 "status": true,
                 "message": "New user fetched successfully.",
                 "data": {
@@ -35,16 +35,16 @@ class UserController {
                 },
             });
         } catch (error) {
-            return response.status(422).json({
+            return res.status(422).json({
                 "status": false,
                 "message": error
             })
         }
     }
 
-    static async dailyUser (request, response) {
+    static async dailyUser (req, res) {
         try {
-            const user = await UserController.getMe(request);
+            const user = await UserController.getMe(req);
             if (user.daily_view_limit > 0) {
                 const gender = user.gender == "male" ? "female" : "male";
                 
@@ -73,33 +73,33 @@ class UserController {
                         about_yourself: 1,
                     }}
                 ])
-                return response.json({
+                return res.json({
                     "status": true,
                     "message": randomUser ? "Fetched user successfully." : "Fetch user limit exceed.",
                     "data": randomUser
                 })
             } else {
-                return response.json({
+                return res.json({
                     status: false,
                     message: "Daily view limit exceeded.",
                     data: null
                 });
             }
         } catch (error) {
-            return response.status(422).json({
+            return res.status(422).json({
                 "status": false,
                 "message": error
             })
         }
     }
 
-    static async matchesUser (request, response) {
+    static async matchesUser (req, res) {
         try {
-            const limit = parseInt(request.query.limit) || 10;
-            const page = parseInt(request.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const page = parseInt(req.query.page) || 1;
 
             const skip = (page-1) * limit;
-            const user = await UserController.getMe(request);
+            const user = await UserController.getMe(req);
             const gender = user.gender === "male" ? "female" : "male";
 
             const totalCount = await User.countDocuments({
@@ -116,7 +116,7 @@ class UserController {
             .limit(limit)
             .skip(skip);
             
-            return response.json({
+            return res.json({
                 "status": true,
                 "message": "Matches user fetched successfully.",
                 "data": {
@@ -126,34 +126,34 @@ class UserController {
                 },
             });
         } catch (error) {
-            return response.status(422).json({
+            return res(422).json({
                 "status": false,
                 "message": error
             })
         }
     }
 
-    static async getMe (request) {
-        const decoded = jwt.verify(request.headers.authorization, process.env.SECRET_KEY);
+    static async getMe (req) {
+        const decoded = jwt.verify(req.headers.authorization, process.env.SECRET_KEY);
         const user = await User.findOne({_id: decoded._id});
         return user;
     }
 
-    static async decreaseLimit (request, response) {
-        const decoded = jwt.verify(request.headers.authorization, process.env.SECRET_KEY);
+    static async decreaseLimit (req, res){
+        const decoded = jwt.verify(req.headers.authorization, process.env.SECRET_KEY);
         const user = await User.findByIdAndUpdate(decoded._id, {
             $inc:{daily_view_limit: -1},
         });
     }
 
-    static async nearMe (request, response) {
+    static async nearMe (req, res) {
         try {
-            const limit = parseInt(request.query.limit) || 10;
-            const page = parseInt(request.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const page = parseInt(req.query.page) || 1;
 
             const skip = (page-1) * limit;
 
-            const user = await UserController.getMe(request);
+            const user = await UserController.getMe(req);
             const gender = user.gender === "male" ? "female" : "male";
 
             const totalCount = await User.countDocuments({
@@ -170,7 +170,7 @@ class UserController {
             .limit(limit)
             .skip(skip);
             
-            return response.json({
+            return res.json({
                 "status": true,
                 "message": "Near me user fetched successfully.",
                 "data": {
@@ -180,19 +180,19 @@ class UserController {
                 },
             });
         } catch (error) {
-            return response.status(422).json({
+            return res.status(422).json({
                 "status": false,
                 "message": error
             })
         }
     }
-    static async recentlyJoin(request, response) {
+    static async recentlyJoin(req, res) {
         try {            
-            const user = await UserController.getMe(request);
+            const user = await UserController.getMe(req);
             const gender = user.gender == "male" ? "female" : "male";
 
-            const limit = parseInt(request.query.limit) || 10;
-            const page = parseInt(request.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const page = parseInt(req.query.page) || 1;
 
             const totalCount = await User.countDocuments({
                 gender,
@@ -208,7 +208,7 @@ class UserController {
             }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself ")
             .sort({createdAt: -1}).limit(limit).skip(skip);
             
-            return response.json({
+            return res.json({
                 "status": true,
                 "message": "Recently user fetched successfully.",
                 "data": {
@@ -218,7 +218,7 @@ class UserController {
                 },
             });
         } catch (error) {
-            return response.status(422).json({
+            return res.status(422).json({
                 "status": false,
                 "message": error
             })

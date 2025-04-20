@@ -3,11 +3,11 @@ const User = require("../models/User");
 require('dotenv').config()
 
 // const role = async (...roles)  => {
-//     return async (request, response, next) => {
+//     return async (req, res, next) => {
 //         try {
-//             const token = request.headers.authorization;
+//             const token = req.headers.authorization;
 //             if (!token) {
-//                 return response.status(401).json({
+//                 return res.status(401).json({
 //                     status: false,
 //                     message: "Authorization token is missing.",
 //                 });
@@ -18,12 +18,12 @@ require('dotenv').config()
 //             if (roles.includes(user.role)) {
 //                 next()
 //             } else {
-//                 return response.status(403).json({
+//                 return res.status(403).json({
 //                     error: "Forbidden",
 //                 })
 //             }
 //         } catch (error) {
-//             return response.status(404).json({
+//             return res.status(404).json({
 //                 message: error.message || "Authentication failed",
 //             });
 //         }
@@ -58,7 +58,7 @@ const role = (roles) => {
             }
 
             if (roles.includes(user.role)) {
-                req.user = user; // optionally attach user to request
+                req.user = user; // optionally attach user to req
                 next();
             } else {
                 return res.status(403).json({

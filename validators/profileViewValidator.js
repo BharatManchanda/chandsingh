@@ -1,5 +1,7 @@
 const { body } = require('express-validator');
 const User = require('../models/User');
+const mongoose = require("mongoose");
+const ProfileView = require('../models/ProfileView');
 
 const profileViewMarkValidator = [
     body('userId')

@@ -1,119 +1,119 @@
 const FriendRequest = require("../models/FriendRequest")
 
 class FriendRequestController {
-    static async sendRequest (request, response) {
+    static async sendRequest (req, res) {
         try {
-            const { receiverId } = request.body;
+            const { receiverId } = req.body;
             const friendRequest = new FriendRequest({
-                senderId: request.user._id,
+                senderId: req.user._id,
                 receiverId: receiverId
             })
             await friendRequest.save();
-            return response.json({
+            return res.json({
                 status: true,
                 message: "Friend request sent successfully",
             });
         } catch (error) {
-            return response.json({
+            return res.json({
                 status: false,
                 message: error,
             });
         }
     }
 
-    static async acceptRequest (request, response) {
+    static async acceptRequest (req, res) {
         try {
-            const { senderId } = request.body;
+            const { senderId } = req.body;
             await FriendRequest.findOneAndUpdate({
                 senderId: senderId,
-                receiverId: request.user._id,
+                receiverId: req.user._id,
             }, {
                 status: "accept",
             })
-            return response.json({
+            return res.json({
                 status: true,
                 message: "Friend request accepted successfully.",
             });
         } catch (error) {
-            return response.json({
+            return res.json({
                 status: false,
                 message: error,
             });
         }
     }
 
-    static async declineRequest (request, response) {
+    static async declineRequest (req, res) {
         try {
-            const {senderId} = request.body;
+            const {senderId} = req.body;
             await FriendRequest.findOneAndUpdate({
                 senderId: senderId,
-                receiverId: request.user._id,
+                receiverId: req.user._id,
             }, {
                 status: "decline",
             })
-            return response.json({
+            return res.json({
                 status: true,
                 message: "Friend request declineed successfully.",
             });
         } catch (error) {
-            return response.json({
+            return res.json({
                 status: false,
                 message: error,
             });
         }
     }
 
-    static async getFriendRequestList (request, response) {
+    static async getFriendRequestList (req, res) {
         try {
             const friendRequest = await FriendRequest.find({
-                receiverId: request.user._id,
+                receiverId: req.user._id,
                 status: "pending",
             }).populate('senderId', 'first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit');
-            return response.json({
+            return res.json({
                 status: true,
                 message: "Friend request fetched successfully.",
                 data: friendRequest,
             });
         } catch (error) {
-            return response.json({
+            return res.json({
                 status: false,
                 message: error,
             });
         }
     }
 
-    static async getFriendRequestDeclined (request, response) {
+    static async getFriendRequestDeclined (req, res) {
         try {
             const friendRequest = await FriendRequest.find({
-                receiverId: request.user._id,
+                receiverId: req.user._id,
                 status : "decline",
             });
-            return response.json({
+            return res.json({
                 status: true,
                 message: "Friend request fetched successfully.",
                 data: friendRequest,
             });
         } catch (error) {
-            return response.json({
+            return res.json({
                 status: false,
                 message: error,
             });
         }
     }
 
-    static async getFriendRequestAccepted (request, response) {
+    static async getFriendRequestAccepted (req, res) {
         try {
             const friendRequest = await FriendRequest.find({
-                receiverId: request.user._id,
+                receiverId: req.user._id,
                 status : "accept",
             });
-            return response.json({
+            return res.json({
                 status: true,
                 message: "Friend request fetched successfully.",
                 data: friendRequest,
             });
         } catch (error) {
-            return response.json({
+            return res.json({
                 status: false,
                 message: error,
             });

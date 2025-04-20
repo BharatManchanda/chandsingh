@@ -6,7 +6,6 @@ const auth = require("../middleware/Auth");
 const { planCreateOrEditValidator, planDeleteValidator } = require("../validators/planValidator");
 const { Validate } = require("../middleware/Validate");
 
-router.use(auth);
 router.post('/plan', PlanController.list);
 
 router.use(role(["admin"]));

@@ -19,12 +19,12 @@ exports.friendRequestSendValidator = [
                 return Promise.reject('Receiver user does not exist.');
             }
 
-            // 2. Prevent self-request
+            // 2. Prevent self-req
             if (req.user._id.toString() === receiverId.toString()) {
-                return Promise.reject('You cannot send a friend request to yourself.');
+                return Promise.reject('You cannot send a friend req to yourself.');
             }
 
-            // 3. Check for existing friend request in either direction
+            // 3. Check for existing friend req in either direction
             const existingRequest = await FriendRequest.findOne({
                 $or: [
                     { senderId: req.user._id, receiverId },
@@ -33,7 +33,7 @@ exports.friendRequestSendValidator = [
             });
 
             if (existingRequest) {
-                return Promise.reject('Friend request already exists.');
+                return Promise.reject('Friend req already exists.');
             }
             return true;
         })
@@ -48,13 +48,13 @@ exports.friendRequestAcceptValidator = [
                 return Promise.reject('Invalid Sender ID format.');
             }
 
-            // 2. Update the friend request
+            // 2. Update the friend req
             const updatedRequest = await FriendRequest.findOneAndUpdate({
                 senderId: senderId,
                 status: "pending",
             });
             if (!updatedRequest) {
-                return Promise.reject('Friend request not found.');
+                return Promise.reject('Friend req not found.');
             }
         })
 ];
@@ -68,14 +68,14 @@ exports.friendRequestDeclineValidator = [
                 return Promise.reject('Invalid Sender ID format.');
             }
 
-            // 2. Update the friend request
+            // 2. Update the friend req
             const updatedRequest = await FriendRequest.findOneAndUpdate({
                 senderId: senderId,
                 status: "pending",
             });
             
             if (!updatedRequest) {
-                return Promise.reject('Friend request not found.');
+                return Promise.reject('Friend req not found.');
             }
         })
 ];

@@ -7,19 +7,24 @@ const TokenSchema = mongoose.Schema({
 })
 
 const UserSchema = mongoose.Schema({
-    first_name:  {
+    profile_for: {
+        type: String,
+        required: true,
+        default: 'self',//son, daughter, sister, brother, friend
+    },
+    first_name: {
         type: String,
         required: true,
     },
-    last_name:  {
+    last_name: {
         type: String,
         required: true,
     },
-    email:  {
+    email: {
         type: String,
         required: true,
     },
-    password:{
+    password: {
         type: String,
         required: true,
     },
@@ -28,7 +33,7 @@ const UserSchema = mongoose.Schema({
         default: 'client',
         required: true,
     },
-    phone:  {
+    phone: {
         type: String,
         required: false,
     },
@@ -36,7 +41,7 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: false,
     },
-    dob:{
+    dob: {
         type: Date,
         required: false,
     },
@@ -118,6 +123,17 @@ UserSchema.pre('save', async function (next) {
         next();
     }
 });
+
+UserSchema.virtual('files', {
+    ref: 'File', // Refers to the File model
+    localField: '_id', // _id from the User
+    foreignField: 'fileable_id', // matches fileable_id in File
+    justOne: false, // many files
+    options: { match: { fileable_type: 'User' } } // only include files where fileable_type is 'User'
+});
+
+UserSchema.set('toObject', { virtuals: true });
+UserSchema.set('toJSON', { virtuals: true });
 
 const User = mongoose.model('User', UserSchema);
 module.exports = User;

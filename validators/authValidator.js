@@ -53,4 +53,10 @@ exports.registerValidator = [
     body("income.type").optional().isString(),
     body("income.amount_range").optional().isString(),
     body("about_yourself").optional().isString(),
+    body('image').custom((value, { req }) => {
+        if (!req.file) {
+            throw new Error('Image is required and must be in jpg, jpeg or png format');
+        }
+        return true;
+    }),
 ];
