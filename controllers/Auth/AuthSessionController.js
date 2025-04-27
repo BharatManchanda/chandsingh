@@ -49,7 +49,7 @@ class AuthSessionController {
     }
     static async register (req, res) {
         try {
-            const {first_name, last_name, email, password, role, phone, gender, dob, religion, community, live, live_with_your_family, marital_status, diet, height, highest_qualification, college_name,  work_with,  income, about_yourself, hobboies, fun_and_entertainment, fitness_and_wellness, other_interests } = req.body;
+            const {first_name, last_name, email, password, role, phone, gender, dob, religion, community, live, live_with_your_family, marital_status, diet, height, highest_qualification, college_name,  work_with,  income, about_yourself, hobbies} = req.body;
             const user = new User({
                 first_name,
                 last_name,
@@ -71,10 +71,7 @@ class AuthSessionController {
                 work_with,
                 income,
                 about_yourself,
-                hobboies,
-                fun_and_entertainment,
-                fitness_and_wellness,
-                other_interests,
+                hobbies,
             });
             await user.save();
 
