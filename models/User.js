@@ -111,6 +111,34 @@ const UserSchema = mongoose.Schema({
     daily_view_limit: {
         type: Number,
         default: 10,
+    },
+    hobboies:{
+        type: Array,
+        required: false,
+    },
+    fun_and_entertainment:{
+        type: Array,
+        required: false,
+    },
+    fitness_and_wellness:{
+        type: Array,
+        required: false,
+    },
+    other_interests:{
+        type: Array,
+        required: false,
+    },
+    plan: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Plan'
+    },
+    contactViewsRemaining: {
+        type: Number,
+        default: 0
+    },
+    planActivatedAt: {
+        type: Date,
+        required: false,
     }
 },{
     timestamps: true,

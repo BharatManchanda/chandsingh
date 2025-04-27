@@ -10,6 +10,13 @@ exports.Validate = (req, res, next) => {
                 if (err) console.error("Error deleting file:", err);
             });
         }
+		if (req.files) {
+			for (const file of req.files) {
+				fs.unlink(file.path, (err) => {
+					if (err) console.error("Error deleting file:", err);
+				});
+			}
+		}
 
 		const allErrors = result.array();
 		const uniqueErrors = {};

@@ -1,5 +1,7 @@
 const { body } = require('express-validator');
 const User = require('../models/User');
+const mongoose = require('mongoose');
+const File = require('../models/File');
 
 exports.loginValidator = [
     body('email')
@@ -53,10 +55,94 @@ exports.registerValidator = [
     body("income.type").optional().isString(),
     body("income.amount_range").optional().isString(),
     body("about_yourself").optional().isString(),
+    // body('image').custom((value, { req }) => {
+    //     if (!req.file) {
+    //         throw new Error('Image is required and must be in jpg, jpeg or png format');
+    //     }
+    //     return true;
+    // }),
+];
+
+exports.profileImageCreateValidator = [
     body('image').custom((value, { req }) => {
         if (!req.file) {
             throw new Error('Image is required and must be in jpg, jpeg or png format');
         }
         return true;
     }),
+
+    body('image').custom(async (value, { req }) => {
+        const userId = req.user._id; // assuming auth middleware sets req.user
+        const alreadyUploadedCount = await File.countDocuments({ fileable_id: userId, fileable_type: "User" });
+
+        const total = alreadyUploadedCount + 1;
+
+        if (total > 5) {
+            return Promise.reject(`You can upload maximum 5 images in total. You already uploaded.`);
+        }
+
+        return true;
+    })
+    
+]
+
+exports.profileImageUpdateValidator = [
+    body('image').custom((value, { req }) => {
+        if (!req.file) {
+            throw new Error('Image is required and must be in jpg, jpeg or png format');
+        }
+        return true;
+    }),
+    body('_id')
+    .notEmpty().withMessage('_id is required.')
+    .custom(async (_id, { req }) => {
+        // 1. Mongoose ID validation
+        if (!mongoose.Types.ObjectId.isValid(_id)) {
+            return Promise.reject('Invalid _id format.');
+        }
+
+        // 2. Update the friend req
+        const file = await File.findOne({
+            _id: _id,
+
+        });
+        
+        if (!file) {
+            return Promise.reject('_id is wrong.');
+        }
+    })
 ];
+
+exports.profileImageCreateMultipleValidator = [
+    body('image')
+        .custom((value, { req }) => {
+            if (!req.files || req.files.length === 0) {
+                return Promise.reject('Please upload at least one image.');
+            }
+
+            const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+
+            for (let file of req.files) {
+                if (!allowedMimeTypes.includes(file.mimetype)) {
+                    return Promise.reject(`File type ${file.mimetype} not allowed. Only jpg, jpeg, png are accepted.`);
+                }
+            }
+
+            return true;
+        }),
+
+    body('image')
+        .custom(async (value, { req }) => {
+            const userId = req.user._id; // assuming auth middleware sets req.user
+            const alreadyUploadedCount = await File.countDocuments({ fileable_id: userId, fileable_type: "User" });
+
+            const newUploadCount = req.files.length;
+            const total = alreadyUploadedCount + newUploadCount;
+
+            if (total > 5) {
+                return Promise.reject(`You can upload maximum 5 images in total. You already uploaded ${alreadyUploadedCount}.`);
+            }
+
+            return true;
+        })
+]

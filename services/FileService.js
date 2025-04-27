@@ -19,12 +19,12 @@ class FileService {
         return await newFile.save();
     }
 
-    static async updateFile(file, fileable_id, fileable_type) {
+    static async updateFile(file, _id, fileable_id, fileable_type) {
         if (!file) throw new Error('No file provided');
 
         // Delete existing file if it exists
-        const oldFile = await File.findOne({ fileable_id, fileable_type });
-        if (oldFile) await this.deleteFile(oldFile._id);
+        const oldFile = await File.findOne({ _id });
+        if (oldFile) await this.deleteFile(_id);
 
         // Upload new one
         return await this.uploadFile(file, fileable_id, fileable_type);

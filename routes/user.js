@@ -9,5 +9,7 @@ router.post('/matches-user', UserController.matchesUser);
 router.post('/near-me', UserController.nearMe);
 router.post('/recently-join', UserController.recentlyJoin);
 router.post('/decrease-limit', UserController.decreaseLimit);
+router.post('/set-user/plan', UserController.viewContact);
+router.post('/contact-view-request', UserController.viewContact);
 
 module.exports = router;

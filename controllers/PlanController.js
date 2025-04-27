@@ -2,15 +2,15 @@ const Plan = require("../models/Plan")
 
 class PlanController {
 
-    static async createOrUpdate (reqse) {
+    static async createOrUpdate (req, res) {
         try {
-            const {_id, type, symbol, mrp, price, messages, valid_till, status} = reqy;
+            const {_id, type, symbol, mrp, price, messages, valid_till, status, contact_view_limit} = req.body;
             let plan;
 
             if (_id) {
                 plan = await Plan.findByIdAndUpdate(
                     _id,
-                    { type, symbol, mrp, price, messages, valid_till, status },
+                    { type, symbol, mrp, price, messages, valid_till, status, contact_view_limit },
                     { new: true }
                 );
             } else {

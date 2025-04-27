@@ -2,7 +2,7 @@ const AuthSessionController = require("../controllers/Auth/AuthSessionController
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/Auth");
-const { loginValidator, registerValidator } = require("../validators/authValidator");
+const { loginValidator, registerValidator, profileImageCreateValidator, profileImageUpdateValidator, profileImageCreateMultipleValidator } = require("../validators/authValidator");
 const {Validate} = require("../middleware/Validate");
 const path = require('path');
 const multer = require('multer')
@@ -31,10 +31,16 @@ const upload = multer({
 
 
 router.post('/login', loginValidator, Validate, AuthSessionController.login);
-router.post('/register', upload.single('image'), registerValidator,  Validate, AuthSessionController.register);
+router.post('/register', registerValidator,  Validate, AuthSessionController.register);
 
 router.use(auth);
 router.post('/logout', AuthSessionController.logout);
 router.post('/get-me', AuthSessionController.getMe);
+
+router.post('/profile-image/', AuthSessionController.listImage)
+router.post('/profile-image/add', upload.single('image'), profileImageCreateValidator, Validate, AuthSessionController.addImage)
+router.post('/profile-image/add-multi', upload.array('image', 5), profileImageCreateMultipleValidator, Validate, AuthSessionController.addMultiImage)
+router.post('/profile-image/update', upload.single('image'), profileImageUpdateValidator, Validate, AuthSessionController.updateImage)
+router.post('/profile-image/delete', AuthSessionController.deleteImage)
 
 module.exports = router;

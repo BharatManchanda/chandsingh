@@ -25,6 +25,10 @@ const PlanSchema = mongoose.Schema({
         type: Number,
         required: true,
     },
+    contact_view_limit: {
+        type: Number,
+        required: true,
+    },
     status: {
         type: Boolean,
         default: true

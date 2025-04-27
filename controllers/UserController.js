@@ -224,6 +224,11 @@ class UserController {
             })
         }
     }
+    
+    static async viewContact(req, resp) {
+        const user = req.user;
+        user.plan
+    }
 }
 
 

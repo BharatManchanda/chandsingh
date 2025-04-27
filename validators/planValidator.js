@@ -1,6 +1,10 @@
 const { body, param } = require('express-validator');
 
 const planCreateOrEditValidator = [
+    body('contact_view_limit')
+        .notEmpty().withMessage('Contact view limit is required.')
+        .isString().withMessage('Contact view limit must be a string.'),
+
     body('type')
         .notEmpty().withMessage('Type is required.')
         .isString().withMessage('Type must be a string.'),
