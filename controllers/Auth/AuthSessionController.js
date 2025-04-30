@@ -30,7 +30,7 @@ class AuthSessionController {
         } catch (error) {
             return res.status(422).json({
                 "status": false,
-                "message": error
+                "message": error.message
             })
         }
     }
@@ -201,6 +201,8 @@ class AuthSessionController {
 
     static async addMultiImage(req, res) {
         try {
+            console.log("tested");
+            
             req.files.map(async(file) => {
                 await FileService.uploadFile(file, req.user._id, 'User');
             });
