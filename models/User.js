@@ -112,19 +112,7 @@ const UserSchema = mongoose.Schema({
         type: Number,
         default: 10,
     },
-    hobboies:{
-        type: Array,
-        required: false,
-    },
-    fun_and_entertainment:{
-        type: Array,
-        required: false,
-    },
-    fitness_and_wellness:{
-        type: Array,
-        required: false,
-    },
-    other_interests:{
+    hobbies:{
         type: Array,
         required: false,
     },
@@ -137,6 +125,10 @@ const UserSchema = mongoose.Schema({
         default: 0
     },
     planActivatedAt: {
+        type: Date,
+        required: false,
+    },
+    planExpiredAt: {
         type: Date,
         required: false,
     }

@@ -1,3 +1,4 @@
+const Plan = require("../models/Plan");
 const User = require("../models/User")
 const jwt = require("jsonwebtoken");
 
@@ -225,9 +226,54 @@ class UserController {
         }
     }
     
-    static async viewContact(req, resp) {
-        const user = req.user;
-        user.plan
+    static async setUserPlan(req, res) {
+        try {
+            const userId = req.user._id;
+            const plan = await Plan.find({_id: req.body.plan_id})
+            await User.findByIdAndUpdate(userId, {
+                plan: req.body.plan_id,
+                contactViewsRemaining:plan.contact_view_limit, 
+                planActivatedAt: Date.now(),
+                planExpiredAt: Date.now()
+            })
+            return res.json({
+                "status": true,
+                "message": "Plan activate for the user.",
+                "data": {
+                    totalCount,
+                    totalPages,
+                    data,
+                },
+            });
+        } catch (error) {
+            return res.status(422).json({
+                "status": false,
+                "message": error
+            })
+        }
+    }
+
+    static async viewContact(req, res) {
+        try {
+            const user = await User.findOne({
+                _id: req.body.userId
+            }).select("phone");
+
+            await User.findByIdAndUpdate(req.user._id, {
+                contactViewsRemaining
+            });
+
+            return res.json({
+                "status": true,
+                "message": "Contact number fetched successfully.",
+                "data": user,
+            });
+        } catch (error) {
+            return res.status(422).json({
+                "status": false,
+                "message": error
+            })
+        }
     }
 }
 
