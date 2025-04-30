@@ -8,22 +8,31 @@ const File = require("../../models/File");
 
 class AuthSessionController {
     static async login (req, res) {
-        const {email, password} = req.body;
-        const user = await User.findOne({email});
-        if (!user) throw new Error("Invalid credentials.");
+        try {
+            const {email, password} = req.body;
+            const user = await User.findOne({email});
+            if (!user) throw new Error("Invalid credentials.");
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) throw new Error("Invalid credentials.");
-        const {_id, first_name, last_name} = user;
-        const token = jwt.sign({ _id, first_name, last_name  }, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
-        user.tokens.push({token, issueAt: new Date()});
-        await user.save();
-        return res.status(200).json({
-            status: true,
-            message: "User login successfully.",
-            data: removeKeys(["tokens", "password"], user.toObject()),
-            token,
-        });
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) throw new Error("Invalid credentials.");
+
+            const {_id, first_name, last_name} = user;
+            const token = jwt.sign({ _id, first_name, last_name  }, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
+            user.tokens.push({token, issueAt: new Date()});
+            await user.save();
+
+            return res.status(200).json({
+                status: true,
+                message: "User login successfully.",
+                data: removeKeys(["tokens", "password"], user.toObject()),
+                token,
+            });
+        } catch (error) {
+            return res.status(422).json({
+                "status": false,
+                "message": error
+            })
+        }
     }
     static async logout (req, res) {
         try {
