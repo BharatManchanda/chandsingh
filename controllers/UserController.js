@@ -52,6 +52,14 @@ class UserController {
                 const [randomUser] = await User.aggregate([
                     { $match: { role: 'client', gender: gender}},
                     { $sample:{ size: 1}},
+                    {
+                        $lookup: {
+                          from: 'files', // collection name (usually plural and lowercase)
+                          localField: 'files',
+                          foreignField: '_id',
+                          as: 'files'
+                        }
+                    },
                     { $project: {
                         first_name: 1,
                         last_name: 1,
@@ -73,6 +81,7 @@ class UserController {
                         income: 1,
                         about_yourself: 1,
                         hobbies: 1,
+                        files: 1,
                     }}
                 ])
                 return res.json({
@@ -113,7 +122,7 @@ class UserController {
             const matchesUser = await User.find({
                 gender,
                 role: "client"
-            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies")
+            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies").populate('files')
             .sort({createdAt: -1})
             .limit(limit)
             .skip(skip);
@@ -167,7 +176,7 @@ class UserController {
             const nearMe = await User.find({
                 gender,
                 role: "client"
-            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies")
+            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies").populate('files')
             .sort({createdAt: -1})
             .limit(limit)
             .skip(skip);
@@ -207,7 +216,7 @@ class UserController {
             const data = await User.find({
                 gender,
                 role: "client"
-            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies")
+            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies").populate('files')
             .sort({createdAt: -1}).limit(limit).skip(skip);
             
             return res.json({
