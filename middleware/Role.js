@@ -73,7 +73,4 @@ const role = (roles) => {
     };
 };
 
-// module.exports = role;
-
-
 module.exports = role;
