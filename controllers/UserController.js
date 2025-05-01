@@ -22,8 +22,8 @@ class UserController {
             const newUsers = await User.find({
                 gender,
                 role: "client"
-            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself ")
-            .sort({createdAt: -1}).limit(limit).skip(skip);
+            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies")
+            .sort({createdAt: -1}).limit(limit).skip(skip).populate('files');
 
             
             return res.json({
@@ -72,6 +72,7 @@ class UserController {
                         work_with: 1,
                         income: 1,
                         about_yourself: 1,
+                        hobbies: 1,
                     }}
                 ])
                 return res.json({
@@ -112,7 +113,7 @@ class UserController {
             const matchesUser = await User.find({
                 gender,
                 role: "client"
-            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself")
+            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies")
             .sort({createdAt: -1})
             .limit(limit)
             .skip(skip);
@@ -166,7 +167,7 @@ class UserController {
             const nearMe = await User.find({
                 gender,
                 role: "client"
-            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself")
+            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies")
             .sort({createdAt: -1})
             .limit(limit)
             .skip(skip);
@@ -206,7 +207,7 @@ class UserController {
             const data = await User.find({
                 gender,
                 role: "client"
-            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself ")
+            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies")
             .sort({createdAt: -1}).limit(limit).skip(skip);
             
             return res.json({
