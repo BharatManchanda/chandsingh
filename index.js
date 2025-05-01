@@ -5,10 +5,10 @@ const app = express()
 const port = 8080
 const authRoutes = require("./routes/auth")
 const userRoutes = require("./routes/user")
-const planRoutes = require("./routes/plan")
 const friendRequestRoutes = require("./routes/friendRequest")
 const profileViewRoutes = require("./routes/profileView")
 const partnerPreference = require("./routes/partnerPreference")
+const planRoutes = require("./routes/plan")
 const path = require('path')
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

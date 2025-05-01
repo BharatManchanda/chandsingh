@@ -1,7 +1,6 @@
 const FriendRequestController = require("../controllers/FriendRequestController");
 const express = require("express");
 const router = express.Router();
-const auth = require("../middleware/Auth");
 const { friendRequestSendValidator, friendRequestAcceptValidator, friendRequestDeclineValidator } = require("../validators/frientRequestValidator");
 const { Validate } = require("../middleware/Validate");
 

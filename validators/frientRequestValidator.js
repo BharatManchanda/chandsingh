@@ -33,7 +33,7 @@ exports.friendRequestSendValidator = [
             });
 
             if (existingRequest) {
-                return Promise.reject('Friend req already exists.');
+                return Promise.reject('Friend request already exists.');
             }
             return true;
         })
@@ -54,7 +54,7 @@ exports.friendRequestAcceptValidator = [
                 status: "pending",
             });
             if (!updatedRequest) {
-                return Promise.reject('Friend req not found.');
+                return Promise.reject('Friend reqest not found.');
             }
         })
 ];
