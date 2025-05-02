@@ -44,7 +44,7 @@ exports.friendRequestAcceptValidator = [
         .notEmpty().withMessage('Sender ID is required.')
         .custom(async (senderId, { req }) => {
             // 1. Mongoose ID validation
-            if (!mongoose.Types.ObjectId.isValid(receiverId)) {
+            if (!mongoose.Types.ObjectId.isValid(senderId)) {
                 return Promise.reject('Invalid Sender ID format.');
             }
 
@@ -64,7 +64,7 @@ exports.friendRequestDeclineValidator = [
         .notEmpty().withMessage('Sender ID is required.')
         .custom(async (senderId, { req }) => {
             // 1. Mongoose ID validation
-            if (!mongoose.Types.ObjectId.isValid(receiverId)) {
+            if (!mongoose.Types.ObjectId.isValid(senderId)) {
                 return Promise.reject('Invalid Sender ID format.');
             }
 
