@@ -1,7 +1,7 @@
 const express = require("express");
 const UserController = require("../controllers/UserController");
 const { Validate } = require("../middleware/Validate");
-const { userPlanSetValidator } = require("../validators/userValidator");
+const { userPlanSetValidator, contactNumberView } = require("../validators/userValidator");
 const router = express.Router();
 
 router.post('/new-user', UserController.newUser);
@@ -11,6 +11,6 @@ router.post('/near-me', UserController.nearMe);
 router.post('/recently-join', UserController.recentlyJoin);
 router.post('/decrease-limit', UserController.decreaseLimit);
 router.post('/set-user/plan', userPlanSetValidator, Validate, UserController.setUserPlan);
-router.post('/contact-view-request', UserController.viewContact);
+router.post('/contact-view-request', contactNumberView, Validate, UserController.viewContact);
 
 module.exports = router;

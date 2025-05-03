@@ -18,7 +18,7 @@ class ProfileViewController {
         } catch (error) {
             return res(422).json({
                 "status": false,
-                "message": error
+                "message": error.message
             });
         }
     }
@@ -37,7 +37,7 @@ class ProfileViewController {
 
             const profileView = await ProfileView.find({
                 userId: req.user._id,
-            }).populate('viewerId', "first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit")
+            }).populate('viewerId', "first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit")
             .sort({createdAt: -1})
             .limit(limit)
             .skip(skip);
@@ -54,7 +54,7 @@ class ProfileViewController {
         } catch (error) {
             return res.json(422).json({
                 "status": false,
-                "message": error
+                "message": error.message
             })
         }
     }

@@ -59,7 +59,7 @@ class PartnerPreferenceController {
         } catch (error) {
             return res.json({
                 status: false,
-                message: error,
+                message: error.message,
             });
         }
     }

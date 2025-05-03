@@ -1,6 +1,7 @@
 const Plan = require("../models/Plan");
 const User = require("../models/User")
 const jwt = require("jsonwebtoken");
+const { maskedPhone, maskedEmail } = require("../utils/maskData");
 
 class UserController {
     static async newUser (req, res) {
@@ -25,20 +26,27 @@ class UserController {
             }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies")
             .sort({createdAt: -1}).limit(limit).skip(skip).populate('files');
 
-            
+            const maskedUsers = newUsers.map(user => {
+                return {
+                    ...user.toObject(),
+                    phone: maskedPhone(user.phone),
+                    email: maskedEmail(user.email),
+                };
+            })
+
             return res.json({
                 "status": true,
                 "message": "New user fetched successfully.",
                 "data": {
                     totalCount,
                     totalPages,
-                    newUsers,
+                    newUsers:maskedUsers,
                 },
             });
         } catch (error) {
             return res.status(422).json({
                 "status": false,
-                "message": error
+                "message": error.message
             })
         }
     }
@@ -84,6 +92,10 @@ class UserController {
                         files: 1,
                     }}
                 ])
+
+                randomUser.phone = maskedPhone(randomUser.phone);
+                randomUser.email = maskedEmail(randomUser.email);
+
                 return res.json({
                     "status": true,
                     "message": randomUser ? "Fetched user successfully." : "Fetch user limit exceed.",
@@ -99,7 +111,7 @@ class UserController {
         } catch (error) {
             return res.status(422).json({
                 "status": false,
-                "message": error
+                "message": error.message
             })
         }
     }
@@ -126,6 +138,14 @@ class UserController {
             .sort({createdAt: -1})
             .limit(limit)
             .skip(skip);
+
+            const maskedUsers = matchesUser.map(user => {
+                return {
+                    ...user.toObject(),
+                    phone: maskedPhone(user.phone),
+                    email: maskedEmail(user.email),
+                };
+            })
             
             return res.json({
                 "status": true,
@@ -133,13 +153,13 @@ class UserController {
                 "data": {
                     totalCount,
                     totalPages,
-                    matchesUser,
+                    matchesUser:maskedUsers,
                 },
             });
         } catch (error) {
             return res(422).json({
                 "status": false,
-                "message": error
+                "message": error.message
             })
         }
     }
@@ -180,20 +200,28 @@ class UserController {
             .sort({createdAt: -1})
             .limit(limit)
             .skip(skip);
-            
+
+            const maskedUsers = nearMe.map(user => {
+                return {
+                    ...user.toObject(),
+                    phone: maskedPhone(user.phone),
+                    email: maskedEmail(user.email),
+                };
+            })
+
             return res.json({
                 "status": true,
                 "message": "Near me user fetched successfully.",
                 "data": {
                     totalCount,
                     totalPages,
-                    nearMe,
+                    nearMe: maskedUsers,
                 },
             });
         } catch (error) {
             return res.status(422).json({
                 "status": false,
-                "message": error
+                "message": error.message
             })
         }
     }
@@ -219,19 +247,27 @@ class UserController {
             }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies").populate('files')
             .sort({createdAt: -1}).limit(limit).skip(skip);
             
+            const maskedUsers = data.map(user => {
+                return {
+                    ...user.toObject(),
+                    phone: maskedPhone(user.phone),
+                    email: maskedEmail(user.email),
+                };
+            })
+
             return res.json({
                 "status": true,
                 "message": "Recently user fetched successfully.",
                 "data": {
                     totalCount,
                     totalPages,
-                    data,
+                    data:maskedUsers,
                 },
             });
         } catch (error) {
             return res.status(422).json({
                 "status": false,
-                "message": error
+                "message": error.message
             })
         }
     }
@@ -239,26 +275,23 @@ class UserController {
     static async setUserPlan(req, res) {
         try {
             const userId = req.user._id;
-            const plan = await Plan.find({_id: req.body.plan_id})
+            const plan = await Plan.findOne({_id: req.body.plan_id})
+            
             await User.findByIdAndUpdate(userId, {
                 plan: req.body.plan_id,
-                contactViewsRemaining:plan.contact_view_limit, 
+                contactViewsRemaining: plan.contact_view_limit, 
                 planActivatedAt: Date.now(),
-                planExpiredAt: Date.now()
+                planExpiredAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
             })
+            
             return res.json({
                 "status": true,
                 "message": "Plan activate for the user.",
-                "data": {
-                    totalCount,
-                    totalPages,
-                    data,
-                },
             });
         } catch (error) {
             return res.status(422).json({
                 "status": false,
-                "message": error
+                "message": error.message
             })
         }
     }
@@ -270,7 +303,7 @@ class UserController {
             }).select("phone");
 
             await User.findByIdAndUpdate(req.user._id, {
-                contactViewsRemaining
+                $inc: { contactViewsRemaining: -1 }
             });
 
             return res.json({
@@ -281,7 +314,7 @@ class UserController {
         } catch (error) {
             return res.status(422).json({
                 "status": false,
-                "message": error
+                "message": error.message
             })
         }
     }

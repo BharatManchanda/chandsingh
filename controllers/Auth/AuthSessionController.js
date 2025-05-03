@@ -52,7 +52,7 @@ class AuthSessionController {
         } catch (error) {
             return res.status(422).json({
                 "status": false,
-                "message": error
+                "message": error.message
             });
         }
     }
@@ -106,7 +106,7 @@ class AuthSessionController {
         } catch (error) {
             return res.status(422).json({
                 "status": false,
-                "message": error
+                "message": error.message
             })
         }
     }
@@ -124,7 +124,7 @@ class AuthSessionController {
         } catch (error) {
             return res.status(200).json({
                 "status": false,
-                "message": error,
+                "message": error.message,
             });
         }
     }
@@ -141,7 +141,7 @@ class AuthSessionController {
         } catch (error) {
             return res.status(200).json({
                 "status": false,
-                "message": error,
+                "message": error.message,
             });
         }
     }
@@ -159,7 +159,7 @@ class AuthSessionController {
         } catch (error) {
             return res.status(200).json({
                 "status": false,
-                "message": error,
+                "message": error.message,
             });
         }
     }
@@ -175,7 +175,7 @@ class AuthSessionController {
         } catch (error) {
             return res.status(200).json({
                 "status": false,
-                "message": error,
+                "message": error.message,
             });
         }
     }
@@ -194,7 +194,7 @@ class AuthSessionController {
         } catch (error) {
             return res.status(200).json({
                 "status": false,
-                "message": error,
+                "message": error.message,
             });
         }
     }
@@ -213,7 +213,7 @@ class AuthSessionController {
         } catch (error) {
             return res.status(200).json({
                 "status": false,
-                "message": error,
+                "message": error.message,
             });
         }
     }
