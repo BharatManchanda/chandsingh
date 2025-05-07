@@ -1,4 +1,5 @@
 const { body, param } = require('express-validator');
+const Plan = require('../models/Plan');
 
 const planCreateOrEditValidator = [
     body('contact_view_limit')
@@ -13,13 +14,19 @@ const planCreateOrEditValidator = [
         .notEmpty().withMessage('Symbol is required.')
         .isString().withMessage('Symbol must be a string.'),
 
-    body('mrp')
-        .notEmpty().withMessage('MRP is required.')
-        .isNumeric().withMessage('MRP must be a number.'),
-
     body('price')
         .notEmpty().withMessage('Price is required.')
         .isNumeric().withMessage('Price must be a number.'),
+    
+    body('mrp')
+        .notEmpty().withMessage('MRP is required.')
+        .isNumeric().withMessage('MRP must be a number.')
+        .custom((mrp, { req }) => {
+            const price = req.body.price;
+            if (price !== undefined && Number(mrp) <= Number(price)) {
+                return Promise.reject('MRP must be greater than price.');
+            }
+        }),
 
     body('messages')
         .notEmpty().withMessage('Messages are required.')
@@ -36,11 +43,23 @@ const planCreateOrEditValidator = [
     body('_id')
         .optional()
         .isMongoId().withMessage('ID must be a valid Mongo ID.')
+        .custom(async (_id, { req }) => {
+            const plan = await Plan.findById(_id);
+            if (!plan) {
+                return Promise.reject('Plan not found.');
+            }
+        }),
 ];
 
 const planDeleteValidator = [
     param('_id')
-        .isMongoId().withMessage('Invalid plan ID'),
+        .isMongoId().withMessage('Invalid plan ID')
+        .custom(async (_id, { req }) => {
+            const plan = await Plan.findById(_id);
+            if (!plan) {
+                return Promise.reject('Plan not found.');
+            }
+        }),
 ]
 
 module.exports = { planCreateOrEditValidator, planDeleteValidator };

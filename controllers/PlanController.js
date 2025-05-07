@@ -14,8 +14,10 @@ class PlanController {
                     { new: true }
                 );
             } else {
-                const newPlan = new Plan({ type, symbol, mrp, price, messages, valid_till });
+                const newPlan = new Plan({ type, symbol, mrp, price, messages, valid_till, status, contact_view_limit });
                 plan = await newPlan.save();
+                console.log(newPlan,"::newPlan");
+                
             }
             return res.json({
                 "status": true,
@@ -25,7 +27,7 @@ class PlanController {
         } catch (error) {
             return res.status(422).json({
                 "status": false,
-                "message": error
+                "message": error.message
             })
         }
     }

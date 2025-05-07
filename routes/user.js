@@ -1,7 +1,7 @@
 const express = require("express");
 const UserController = require("../controllers/UserController");
 const { Validate } = require("../middleware/Validate");
-const { userPlanSetValidator } = require("../validators/userValidator");
+const { userPlanSetValidator, contactNumberView } = require("../validators/userValidator");
 const router = express.Router();
 
 router.post('/new-user', UserController.newUser);

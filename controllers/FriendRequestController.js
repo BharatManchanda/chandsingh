@@ -16,7 +16,7 @@ class FriendRequestController {
         } catch (error) {
             return res.json({
                 status: false,
-                message: error,
+                message: error.message,
             });
         }
     }
@@ -37,7 +37,7 @@ class FriendRequestController {
         } catch (error) {
             return res.json({
                 status: false,
-                message: error,
+                message: error.message,
             });
         }
     }
@@ -58,17 +58,62 @@ class FriendRequestController {
         } catch (error) {
             return res.json({
                 status: false,
-                message: error,
+                message: error.message,
             });
         }
     }
 
     static async getFriendRequestList (req, res) {
         try {
+
+            // const friendRequest = await FriendRequest.aggregate([
+            //     {
+            //         $match: {receiverId: req.user._id, status: "pending"}
+            //     },
+            //     {
+            //         $lookup: {
+            //             from: "users", // assuming "users" is the collection name for sender data
+            //             localField: "senderId", // this field is the senderId in FriendRequest
+            //             foreignField: "_id", // _id in the "users" collection
+            //             as: "sender" // we will create a new field 'sender'
+            //         }
+            //     },
+            //     { $unwind: "$sender"},
+            //     {
+            //         $project: {
+            //             _id: 1,
+            //             receiverId: 1,
+            //             status: 1,
+            //             sender: {
+            //                 first_name: 1,
+            //                 last_name: 1,
+            //                 email: 1,
+            //                 phone: 1,
+            //                 role: 1,
+            //                 gender: 1,
+            //                 dob: 1,
+            //                 religion: 1,
+            //                 community: 1,
+            //                 live: 1,
+            //                 live_with_your_family: 1,
+            //                 marital_status: 1,
+            //                 diet: 1,
+            //                 height: 1,
+            //                 highest_qualification: 1,
+            //                 college_name: 1,
+            //                 work_with: 1,
+            //                 income: 1,
+            //                 about_yourself: 1,
+            //                 daily_view_limit: 1,
+            //             }
+            //         }
+            //     }
+            // ]);
+
             const friendRequest = await FriendRequest.find({
                 receiverId: req.user._id,
                 status: "pending",
-            }).populate('senderId', 'first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit');
+            }).populate('senderId', 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit');
             return res.json({
                 status: true,
                 message: "Friend request fetched successfully.",
@@ -77,7 +122,7 @@ class FriendRequestController {
         } catch (error) {
             return res.json({
                 status: false,
-                message: error,
+                message: error.message,
             });
         }
     }
@@ -87,7 +132,7 @@ class FriendRequestController {
             const friendRequest = await FriendRequest.find({
                 receiverId: req.user._id,
                 status : "decline",
-            });
+            }).populate('senderId', 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit');
             return res.json({
                 status: true,
                 message: "Friend request fetched successfully.",
@@ -96,7 +141,7 @@ class FriendRequestController {
         } catch (error) {
             return res.json({
                 status: false,
-                message: error,
+                message: error.message,
             });
         }
     }
@@ -106,7 +151,7 @@ class FriendRequestController {
             const friendRequest = await FriendRequest.find({
                 receiverId: req.user._id,
                 status : "accept",
-            });
+            }).populate('senderId', 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit');
             return res.json({
                 status: true,
                 message: "Friend request fetched successfully.",
@@ -115,7 +160,7 @@ class FriendRequestController {
         } catch (error) {
             return res.json({
                 status: false,
-                message: error,
+                message: error.message,
             });
         }
     }
