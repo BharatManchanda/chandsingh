@@ -12,5 +12,6 @@ router.post('/recently-join', UserController.recentlyJoin);
 router.post('/decrease-limit', UserController.decreaseLimit);
 router.post('/set-user/plan', userPlanSetValidator, Validate, UserController.setUserPlan);
 router.post('/contact-view-request', UserController.viewContact);
+router.post('/user-detail/:userId', userDetailValidator, Validate, UserController.detail);
 
 module.exports = router;

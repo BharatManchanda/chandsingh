@@ -23,4 +23,8 @@ const contactNumberView = [
     
 ];
 
-module.exports = { contactNumberView, userPlanSetValidator };
+const userDetailValidator = [
+    
+]
+
+module.exports = { contactNumberView, userPlanSetValidator, userDetailValidator };

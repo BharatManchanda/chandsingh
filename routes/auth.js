@@ -33,7 +33,7 @@ const upload = multer({
 router.post('/login', loginValidator, Validate, AuthSessionController.login);
 router.post('/register', registerValidator,  Validate, AuthSessionController.register);
 
-router.use(auth);
+// router.use(auth);
 router.post('/logout', AuthSessionController.logout);
 router.post('/get-me', AuthSessionController.getMe);
 

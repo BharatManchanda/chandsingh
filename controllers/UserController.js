@@ -285,6 +285,22 @@ class UserController {
             })
         }
     }
+
+    static async detail(req, res) {
+        try {
+            const user = await User.findById(req.params.userId).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies");
+            return res.json({
+                "status": true,
+                "message": "User detial fetched successfully.",
+                "data": user,
+            });
+        } catch (error) {
+            return res.status(422).json({
+                "status": false,
+                "message": error.message
+            })
+        }
+    }
 }
 
 
