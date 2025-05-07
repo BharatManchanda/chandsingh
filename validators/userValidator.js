@@ -1,5 +1,5 @@
 const Plan = require("../models/Plan");
-const { body } = require('express-validator');
+const { body,  param } = require('express-validator');
 const mongoose = require("mongoose");
 const User = require("../models/User");
 
@@ -51,7 +51,20 @@ const contactNumberView = [
 ];
 
 const userDetailValidator = [
-    
+    param('userId')
+        .notEmpty().withMessage('User Id is required')
+        .custom(async (userId) => {
+            // 1. Mongoose ID validation
+            if (!mongoose.Types.ObjectId.isValid(userId)) {
+                return Promise.reject('Invalid User ID format.');
+            }
+
+            // 2. Check if user exists
+            const user = await User.find({ _id: userId });
+            if (!user) {
+                return Promise.reject('User does not exist.');
+            }
+        })
 ]
 
 module.exports = { contactNumberView, userPlanSetValidator, userDetailValidator };
