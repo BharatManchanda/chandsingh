@@ -17,7 +17,9 @@ class AuthSessionController {
             if (!isMatch) throw new Error("Invalid credentials.");
 
             const {_id, first_name, last_name} = user;
-            const token = jwt.sign({ _id, first_name, last_name  }, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
+            // const token = jwt.sign({ _id, first_name, last_name  }, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
+            const token = jwt.sign({ _id, first_name, last_name }, process.env.SECRET_KEY, { expiresIn: '60d' });
+
             user.tokens.push({token, issueAt: new Date()});
             await user.save();
 
@@ -78,15 +80,14 @@ class AuthSessionController {
                 highest_qualification,
                 college_name,
                 work_with,
-                income,
-                about_yourself,
-                hobbies,
+                income
             });
             await user.save();
 
             // Create JWT token
             const { _id } = user;
-            const token = jwt.sign({ _id, first_name, last_name }, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
+            // const token = jwt.sign({ _id, first_name, last_name }, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
+            const token = jwt.sign({ _id, first_name, last_name }, process.env.SECRET_KEY, { expiresIn: '60d' });
 
             // Push token to the user's tokens array
             user.tokens.push({ token, issueAt: new Date() });
