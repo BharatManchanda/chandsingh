@@ -13,13 +13,9 @@ const FriendRequestSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        default: 'pending',
+        default: 'pending', // decline, accept
         required: true,
     },
-    lastActive: {
-        type: Date,
-        default: Date.now,
-    }
 }, {
     timestamps: true,
 });

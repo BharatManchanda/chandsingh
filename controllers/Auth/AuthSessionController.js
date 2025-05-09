@@ -11,11 +11,11 @@ class AuthSessionController {
         try {
             const {email, password} = req.body;
             const user = await User.findOne({email});
+            console.log("ok");
             if (!user) throw new Error("Invalid credentials.");
 
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) throw new Error("Invalid credentials.");
-
             const {_id, first_name, last_name} = user;
             // const token = jwt.sign({ _id, first_name, last_name  }, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
             const token = jwt.sign({ _id, first_name, last_name }, process.env.SECRET_KEY, { expiresIn: '60d' });
