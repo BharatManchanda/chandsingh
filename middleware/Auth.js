@@ -21,7 +21,10 @@ const auth = async (req, res, next)  => {
                 message: "User not found.",
             });
         } else {
-            req.user = user
+            req.user = user;
+            await User.findByIdAndUpdate(req.user._id, {
+                lastActive: new Date(),
+            });
         }
         const tokenExists = user.tokens.some((t) => t.token === token);
         if (!tokenExists) {

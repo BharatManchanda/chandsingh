@@ -15,6 +15,10 @@ const FriendRequestSchema = mongoose.Schema({
         type: String,
         default: 'pending',
         required: true,
+    },
+    lastActive: {
+        type: Date,
+        default: Date.now,
     }
 }, {
     timestamps: true,

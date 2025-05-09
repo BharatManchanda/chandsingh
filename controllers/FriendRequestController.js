@@ -113,10 +113,43 @@ class FriendRequestController {
             const friendRequest = await FriendRequest.find({
                 receiverId: req.user._id,
                 status: "pending",
-            }).populate('senderId', 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit');
+            }).populate({
+                path: 'senderId',
+                select:'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit',
+                populate: {
+                    path: 'files', // virtual field
+                    model: 'File', // explicitly mention the model
+                }
+            });
             return res.json({
                 status: true,
                 message: "Friend request fetched successfully.",
+                data: friendRequest,
+            });
+        } catch (error) {
+            return res.json({
+                status: false,
+                message: error.message,
+            });
+        }
+    }
+
+    static async getFriendRequestSend() {
+        try {
+            const friendRequest = await FriendRequest.find({
+                senderId: req.user._id,
+                status: "pending",
+            }).populate({
+                path: 'senderId',
+                select: 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit',
+                populate: {
+                    path: 'files', // virtual field
+                    model: 'File', // explicitly mention the model
+                }
+            });
+            return res.json({
+                status: true,
+                message: "Friend Request fetched successfully.",
                 data: friendRequest,
             });
         } catch (error) {
@@ -132,7 +165,14 @@ class FriendRequestController {
             const friendRequest = await FriendRequest.find({
                 receiverId: req.user._id,
                 status : "decline",
-            }).populate('senderId', 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit');
+            }).populate({
+                path: 'senderId',
+                select: 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit',
+                populate: {
+                    path: 'files', // virtual field
+                    model: 'File', // explicitly mention the model
+                }
+            });
             return res.json({
                 status: true,
                 message: "Friend request fetched successfully.",
@@ -151,7 +191,14 @@ class FriendRequestController {
             const friendRequest = await FriendRequest.find({
                 receiverId: req.user._id,
                 status : "accept",
-            }).populate('senderId', 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit');
+            }).populate({
+                path: 'senderId',
+                select: 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit',
+                populate: {
+                    path: 'files', // virtual field
+                    model: 'File', // explicitly mention the model
+                }
+            });
             return res.json({
                 status: true,
                 message: "Friend request fetched successfully.",
