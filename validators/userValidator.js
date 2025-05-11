@@ -2,6 +2,7 @@ const Plan = require("../models/Plan");
 const { body,  param } = require('express-validator');
 const mongoose = require("mongoose");
 const User = require("../models/User");
+const IgnoredUser = require("../models/IgnoredUser");
 
 const userPlanSetValidator = [
     body('plan_id')
@@ -67,4 +68,36 @@ const userDetailValidator = [
         })
 ]
 
-module.exports = { contactNumberView, userPlanSetValidator, userDetailValidator };
+const userIgnoredValidator = [
+    param('userId')
+        .notEmpty().withMessage('User Id is required')
+        .custom(async (userId, { req }) => {
+            // Check if the userId is a valid MongoDB ObjectId
+            if (!mongoose.Types.ObjectId.isValid(userId)) {
+                return Promise.reject('Invalid User ID format.');
+            }
+
+            // Prevent user from ignoring themselves
+            if (req.user && req.user._id === userId) {
+                return Promise.reject('You cannot ignore yourself.');
+            }
+
+            // Check if the user exists
+            const user = await User.findById(userId);
+            if (!user) {
+                return Promise.reject('User does not exist.');
+            }
+
+            // Check user is already ignored
+            const ignoredUser = IgnoredUser.findOne({
+                userId: req.user._id,
+                ignoredUserId: userId,
+            });
+
+            if (ignoredUser) {
+                return Promise.reject('User is already in ignored list.');
+            }
+        })
+  ];
+
+module.exports = { contactNumberView, userPlanSetValidator, userDetailValidator, userIgnoredValidator };

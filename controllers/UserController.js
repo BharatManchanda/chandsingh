@@ -1,9 +1,11 @@
 const Plan = require("../models/Plan");
 const User = require("../models/User")
+const IgnoredUser = require("../models/IgnoredUser");
+
 const jwt = require("jsonwebtoken");
 const { maskedPhone, maskedEmail } = require("../utils/maskData");
-const FriendRequest = require("../models/FriendRequest");
 const { getFriendStatus } = require("../utils/friendUtils");
+const { getIgnoredUserList } = require("../utils/IgnoredUserUtil");
 
 class UserController {
     static async newUser (req, res) {
@@ -15,11 +17,12 @@ class UserController {
             const page = parseInt(req.query.page) || 1;
 
             const {acceptedFriendIds, pendingSentIds} = await getFriendStatus(authUserId);
+            const ignoredId = await getIgnoredUserList(authUserId);
 
             const totalCount = await User.countDocuments({
                 gender,
                 role: "client",
-                _id: { $nin: [...acceptedFriendIds, authUserId] }
+                _id: { $nin: [...acceptedFriendIds, authUserId, ...ignoredId] }
             });
 
             const totalPages = Math.ceil(totalCount / limit);
@@ -27,7 +30,8 @@ class UserController {
             const skip = (page-1) * limit;
             const newUsers = await User.find({
                 gender,
-                role: "client"
+                role: "client",
+                _id: { $nin: [...acceptedFriendIds, authUserId, ...ignoredId] }
             }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies lastActive")
             .sort({createdAt: -1}).limit(limit).skip(skip).populate('files');
             
@@ -133,17 +137,19 @@ class UserController {
             const skip = (page-1) * limit;
             
             const {acceptedFriendIds, pendingSentIds} = await getFriendStatus(authUserId);
-            
+            const ignoredId = await getIgnoredUserList(authUserId);
+
             const totalCount = await User.countDocuments({
                 gender,
-                role: "client"
+                role: "client",
+                _id: { $nin: [...acceptedFriendIds, authUserId, ...ignoredId] }
             });
             const totalPages = Math.ceil(totalCount / limit);
             
             const matchesUser = await User.find({
                 gender,
                 role: "client",
-                _id: { $nin: [...acceptedFriendIds, authUserId] }
+                _id: { $nin: [...acceptedFriendIds, authUserId, ...ignoredId] }
             }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies lastActive").populate('files')
             .sort({createdAt: -1})
             .limit(limit)
@@ -191,20 +197,21 @@ class UserController {
             const page = parseInt(req.query.page) || 1;
 
             const {acceptedFriendIds, pendingSentIds} = await getFriendStatus(authUserId);
-
+            const ignoredId = await getIgnoredUserList(authUserId);
             const skip = (page-1) * limit;
-
-
+            
+            
             const totalCount = await User.countDocuments({
                 gender,
-                role: "client"
+                role: "client",
+                _id: { $nin: [...acceptedFriendIds, authUserId, ...ignoredId] }
             });
             const totalPages = Math.ceil(totalCount / limit);
-
+            
             const nearMe = await User.find({
                 gender,
                 role: "client",
-                _id: { $nin: [...acceptedFriendIds, authUserId] }
+                _id: { $nin: [...acceptedFriendIds, authUserId, ...ignoredId] }
             }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies lastActive").populate('files')
             .sort({createdAt: -1})
             .limit(limit)
@@ -240,13 +247,16 @@ class UserController {
             const authUserId = req.user._id;
             const gender = req.user.gender == "male" ? "female" : "male";
             const limit = parseInt(req.query.limit) || 10;
+
             const {acceptedFriendIds, pendingSentIds} = await getFriendStatus(authUserId);
+            const ignoredId = await getIgnoredUserList(authUserId);
+
             const page = parseInt(req.query.page) || 1;
 
             const totalCount = await User.countDocuments({
                 gender,
                 role: "client",
-                _id: { $nin: [...acceptedFriendIds, authUserId] }
+                _id: { $nin: [...acceptedFriendIds, authUserId, ...ignoredId] }
             });
 
             const totalPages = Math.ceil(totalCount / limit);
@@ -254,7 +264,8 @@ class UserController {
 
             const data = await User.find({
                 gender,
-                role: "client"
+                role: "client",
+                _id: { $nin: [...acceptedFriendIds, authUserId, ...ignoredId] }
             }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies lastActive").populate('files')
             .sort({createdAt: -1}).limit(limit).skip(skip);
             
@@ -360,6 +371,110 @@ class UserController {
                 "status": false,
                 "message": error.message
             })
+        }
+    }
+
+    static async ignoreUser(req, res) {
+        try {
+            const ignoredUser = new IgnoredUser({
+                userId: req.user._id,
+                ignoredUserId: req.params.userId
+            });
+
+            await ignoredUser.save();
+            const populatedIgnoredUser = await IgnoredUser.findById(ignoredUser._id)
+                .populate({
+                    path: 'ignoredUserId',
+                    select: 'first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies lastActive',
+                    populate: {
+                        path: 'files',
+                        model: 'File'
+                    }
+                });
+
+            if (populatedIgnoredUser?.ignoredUserId) {
+                populatedIgnoredUser.ignoredUserId.phone = maskedPhone(populatedIgnoredUser.ignoredUserId.phone);
+                populatedIgnoredUser.ignoredUserId.email = maskedEmail(populatedIgnoredUser.ignoredUserId.email);
+            }
+
+            return res.json({
+                "status": true,
+                "message": "User Ignored successfully.",
+                "data": populatedIgnoredUser,
+            });
+        } catch (error) {
+            return res.status(422).json({
+                "status": false,
+                "message": error.message
+            })
+
+        } 
+    }
+
+    static async getIgnoredUsers(req, res) {
+        try {
+            const currentUserId = req.user._id;
+        
+            const ignoredUsers = await IgnoredUser.find({ userId: currentUserId })
+            .populate({
+                path: 'ignoredUserId',
+                select: 'first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies lastActive files',
+                populate: {
+                    path: 'files',
+                    model: 'File'
+                }
+            })
+            .sort({ createdAt: -1 });
+      
+            // Apply masking on phone and email for each user
+            const result = ignoredUsers.map((ignored) => {
+                const user = ignored.ignoredUserId;
+      
+                if (user) {
+                    user.phone = maskedPhone(user.phone);
+                    user.email = maskedEmail(user.email);
+                }
+      
+                return ignored;
+            });
+      
+            return res.json({
+                status: true,
+                message: "Ignored users fetched successfully.",
+                data: result
+            });
+      
+        } catch (error) {
+            return res.status(422).json({
+                status: false,
+                message: error.message
+            });
+        }
+    }
+
+    static async unignoreUser(req, res) {
+        try {
+            const deleted = await IgnoredUser.findOneAndDelete({
+                userId: req.user._id,
+                ignoredUserId: req.params.userId
+            });
+    
+            if (!deleted) {
+                return res.status(404).json({
+                    status: false,
+                    message: "User not found in ignored list."
+                });
+            }
+    
+            return res.json({
+                status: true,
+                message: "User removed from ignored list successfully.",
+            });
+        } catch (error) {
+            return res.status(422).json({
+                status: false,
+                message: error.message
+            });
         }
     }
 }
