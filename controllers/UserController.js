@@ -6,8 +6,7 @@ const { maskedPhone, maskedEmail } = require("../utils/maskData");
 class UserController {
     static async newUser (req, res) {
         try {
-            const user = await UserController.getMe(req);
-            const gender = user.gender == "male" ? "female" : "male";
+            const gender = req.user.gender == "male" ? "female" : "male";
 
             const limit = parseInt(req.query.limit) || 10;
             const page = parseInt(req.query.page) || 1;
@@ -23,7 +22,7 @@ class UserController {
             const newUsers = await User.find({
                 gender,
                 role: "client"
-            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies")
+            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies lastActive")
             .sort({createdAt: -1}).limit(limit).skip(skip).populate('files');
 
             const maskedUsers = newUsers.map(user => {
@@ -53,9 +52,8 @@ class UserController {
 
     static async dailyUser (req, res) {
         try {
-            const user = await UserController.getMe(req);
-            if (user.daily_view_limit > 0) {
-                const gender = user.gender == "male" ? "female" : "male";
+            if (req.user.daily_view_limit > 0) {
+                const gender = req.user.gender == "male" ? "female" : "male";
                 
                 const [randomUser] = await User.aggregate([
                     { $match: { role: 'client', gender: gender}},
@@ -90,6 +88,7 @@ class UserController {
                         about_yourself: 1,
                         hobbies: 1,
                         files: 1,
+                        lastActive: 1,
                     }}
                 ])
 
@@ -122,8 +121,7 @@ class UserController {
             const page = parseInt(req.query.page) || 1;
 
             const skip = (page-1) * limit;
-            const user = await UserController.getMe(req);
-            const gender = user.gender === "male" ? "female" : "male";
+            const gender = req.user.gender === "male" ? "female" : "male";
 
             const totalCount = await User.countDocuments({
                 gender,
@@ -134,7 +132,7 @@ class UserController {
             const matchesUser = await User.find({
                 gender,
                 role: "client"
-            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies").populate('files')
+            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies lastActive").populate('files')
             .sort({createdAt: -1})
             .limit(limit)
             .skip(skip);
@@ -184,8 +182,7 @@ class UserController {
 
             const skip = (page-1) * limit;
 
-            const user = await UserController.getMe(req);
-            const gender = user.gender === "male" ? "female" : "male";
+            const gender = req.user.gender === "male" ? "female" : "male";
 
             const totalCount = await User.countDocuments({
                 gender,
@@ -196,7 +193,7 @@ class UserController {
             const nearMe = await User.find({
                 gender,
                 role: "client"
-            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies").populate('files')
+            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies lastActive").populate('files')
             .sort({createdAt: -1})
             .limit(limit)
             .skip(skip);
@@ -227,8 +224,7 @@ class UserController {
     }
     static async recentlyJoin(req, res) {
         try {            
-            const user = await UserController.getMe(req);
-            const gender = user.gender == "male" ? "female" : "male";
+            const gender = req.user.gender == "male" ? "female" : "male";
 
             const limit = parseInt(req.query.limit) || 10;
             const page = parseInt(req.query.page) || 1;
@@ -244,7 +240,7 @@ class UserController {
             const data = await User.find({
                 gender,
                 role: "client"
-            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies").populate('files')
+            }).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies lastActive").populate('files')
             .sort({createdAt: -1}).limit(limit).skip(skip);
             
             const maskedUsers = data.map(user => {
@@ -321,7 +317,7 @@ class UserController {
 
     static async detail(req, res) {
         try {
-            const user = await User.findById(req.params.userId).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies");
+            const user = await User.findById(req.params.userId).select("first_name last_name email role phone gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself hobbies lastActive");
             return res.json({
                 "status": true,
                 "message": "User detial fetched successfully.",

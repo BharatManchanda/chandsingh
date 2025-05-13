@@ -134,7 +134,7 @@ class FriendRequestController {
         }
     }
 
-    static async getFriendRequestSend() {
+    static async getFriendRequestSendByMe(req, res) {
         try {
             const friendRequest = await FriendRequest.find({
                 senderId: req.user._id,
@@ -149,7 +149,7 @@ class FriendRequestController {
             });
             return res.json({
                 status: true,
-                message: "Friend Request fetched successfully.",
+                message: "Friend Request sent by me fetched successfully.",
                 data: friendRequest,
             });
         } catch (error) {

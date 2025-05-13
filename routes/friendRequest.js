@@ -9,7 +9,7 @@ router.post('/friend-request/accept', friendRequestAcceptValidator, Validate, Fr
 router.post('/friend-request/decline', friendRequestDeclineValidator, Validate, FriendRequestController.declineRequest);
 
 router.post('/friend-request/get', FriendRequestController.getFriendRequestList);
-router.post('/friend-request/sent', FriendRequestController.getFriendRequestSend);
+router.post('/friend-request/sent-by-me', FriendRequestController.getFriendRequestSendByMe);
 router.post('/friend-request/declined-get', FriendRequestController.getFriendRequestDeclined);
 router.post('/friend-request/accepted-get', FriendRequestController.getFriendRequestAccepted);
 

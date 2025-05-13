@@ -131,6 +131,10 @@ const UserSchema = mongoose.Schema({
     planExpiredAt: {
         type: Date,
         required: false,
+    },
+    lastActive: {
+        type: Date,
+        default: Date.now,
     }
 },{
     timestamps: true,
