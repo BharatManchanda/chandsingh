@@ -115,7 +115,7 @@ class FriendRequestController {
                 status: "pending",
             }).populate({
                 path: 'senderId',
-                select:'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit',
+                select:'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit lastActive',
                 populate: {
                     path: 'files', // virtual field
                     model: 'File', // explicitly mention the model
@@ -141,7 +141,7 @@ class FriendRequestController {
                 status: "pending",
             }).populate({
                 path: 'senderId',
-                select: 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit',
+                select: 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit lastActive',
                 populate: {
                     path: 'files', // virtual field
                     model: 'File', // explicitly mention the model
@@ -167,7 +167,7 @@ class FriendRequestController {
                 status : "decline",
             }).populate({
                 path: 'senderId',
-                select: 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit',
+                select: 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit lastActive',
                 populate: {
                     path: 'files', // virtual field
                     model: 'File', // explicitly mention the model
@@ -193,7 +193,7 @@ class FriendRequestController {
                 status : "accept",
             }).populate({
                 path: 'senderId',
-                select: 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit',
+                select: 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit lastActive',
                 populate: {
                     path: 'files', // virtual field
                     model: 'File', // explicitly mention the model
