@@ -5,7 +5,7 @@ const IgnoredUser = require("../models/IgnoredUser");
 const jwt = require("jsonwebtoken");
 const { maskedPhone, maskedEmail } = require("../utils/maskData");
 const { getFriendStatus } = require("../utils/friendUtils");
-const { getIgnoredUserList } = require("../utils/IgnoredUserUtil");
+const { getIgnoredUserList } = require("../utils/ignoredUserUtils");
 
 class UserController {
     static async newUser (req, res) {
