@@ -189,8 +189,8 @@ class FriendRequestController {
     static async getFriendRequestAccepted (req, res) {
         try {
             const friendRequest = await FriendRequest.find({
-                receiverId: req.user._id,
-                status : "accept",
+                
+                
             }).populate({
                 path: 'senderId',
                 select: 'first_name last_name role gender dob religion community live live_with_your_family marital_status diet height highest_qualification college_name work_with income about_yourself daily_view_limit lastActive',
@@ -199,6 +199,10 @@ class FriendRequestController {
                     model: 'File', // explicitly mention the model
                 }
             });
+            friendRequest.map((friend) => ({
+                ...friend,
+                acceptedBy: senderId == req.user._id ? `accepted by ${req.user.gender === "male" ? "her" : "him"}` : "accepted by me",
+            }))
             return res.json({
                 status: true,
                 message: "Friend request fetched successfully.",
