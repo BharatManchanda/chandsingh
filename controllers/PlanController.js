@@ -16,7 +16,6 @@ class PlanController {
             } else {
                 const newPlan = new Plan({ type, symbol, mrp, price, messages, valid_till, status, contact_view_limit });
                 plan = await newPlan.save();
-                console.log(newPlan,"::newPlan");
                 
             }
             return res.json({

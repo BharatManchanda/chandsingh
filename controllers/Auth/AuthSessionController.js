@@ -11,7 +11,6 @@ class AuthSessionController {
         try {
             const {email, password} = req.body;
             const user = await User.findOne({email});
-            console.log("ok");
             if (!user) throw new Error("Invalid credentials.");
 
             const isMatch = await bcrypt.compare(password, user.password);
@@ -202,8 +201,6 @@ class AuthSessionController {
 
     static async addMultiImage(req, res) {
         try {
-            console.log("tested");
-            
             req.files.map(async(file) => {
                 await FileService.uploadFile(file, req.user._id, 'User');
             });
