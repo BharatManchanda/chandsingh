@@ -14,7 +14,7 @@ class FriendRequestController {
                 message: "Friend request sent successfully",
             });
         } catch (error) {
-            return res.json({
+            return res.status(422).json({
                 status: false,
                 message: error.message,
             });
@@ -35,7 +35,7 @@ class FriendRequestController {
                 message: "Friend request accepted successfully.",
             });
         } catch (error) {
-            return res.json({
+            return res.status(422).json({
                 status: false,
                 message: error.message,
             });
@@ -56,7 +56,7 @@ class FriendRequestController {
                 message: "Friend request declineed successfully.",
             });
         } catch (error) {
-            return res.json({
+            return res.status(422).json({
                 status: false,
                 message: error.message,
             });
@@ -127,7 +127,7 @@ class FriendRequestController {
                 data: friendRequest,
             });
         } catch (error) {
-            return res.json({
+            return res.status(422).json({
                 status: false,
                 message: error.message,
             });
@@ -153,7 +153,7 @@ class FriendRequestController {
                 data: friendRequest,
             });
         } catch (error) {
-            return res.json({
+            return res.status(422).json({
                 status: false,
                 message: error.message,
             });
@@ -179,7 +179,7 @@ class FriendRequestController {
                 data: friendRequest,
             });
         } catch (error) {
-            return res.json({
+            return res.status(422).json({
                 status: false,
                 message: error.message,
             });
@@ -233,7 +233,7 @@ class FriendRequestController {
                 data: friendRequest,
             });
         } catch (error) {
-            return res.json({
+            return res.status(422).json({
                 status: false,
                 message: error.message,
             });

@@ -22,7 +22,7 @@ class AuthSessionController {
             user.tokens.push({token, issueAt: new Date()});
             await user.save();
 
-            return res.status(200).json({
+            return res.json({
                 status: true,
                 message: "User login successfully.",
                 data: removeKeys(["tokens", "password"], user.toObject()),
@@ -30,11 +30,12 @@ class AuthSessionController {
             });
         } catch (error) {
             return res.status(422).json({
-                "status": false,
-                "message": error.message
+                status: false,
+                message: error.message
             })
         }
     }
+
     static async logout (req, res) {
         try {
             const token = req.headers.authorization;
@@ -52,11 +53,12 @@ class AuthSessionController {
             });
         } catch (error) {
             return res.status(422).json({
-                "status": false,
-                "message": error.message
+                status: false,
+                message: error.message
             });
         }
     }
+
     static async register (req, res) {
         try {
             const {first_name, last_name, email, password, role, phone, gender, dob, religion, community, live, live_with_your_family, marital_status, diet, height, highest_qualification, college_name,  work_with,  income, about_yourself, hobbies} = req.body;
@@ -98,15 +100,15 @@ class AuthSessionController {
             // }
             
             return res.json({
-                "status": true,
-                "message": "User register successfully.",
-                "data": removeKeys(["tokens", "password"], user.toObject()),
+                status: true,
+                message: "User register successfully.",
+                data: removeKeys(["tokens", "password"], user.toObject()),
                 token,
             })
         } catch (error) {
             return res.status(422).json({
-                "status": false,
-                "message": error.message
+                status: false,
+                message: error.message
             })
         }
     }
@@ -116,13 +118,13 @@ class AuthSessionController {
             const decoded = jwt.verify(req.headers.authorization, process.env.SECRET_KEY);
             const user = await User.findOne({_id: decoded._id}).populate('files');
             
-            return res.status(200).json({
+            return res.json({
                 status: true,
                 message: "User detail fetched successfully.",
                 data: removeKeys(["tokens", "password"], user.toObject())
             });
         } catch (error) {
-            return res.status(200).json({
+            return res.status(422).json({
                 "status": false,
                 "message": error.message,
             });
@@ -134,12 +136,12 @@ class AuthSessionController {
             if (req.file) {
                 await FileService.uploadFile(req.file, req.user._id, 'User');
             }
-            return res.status(200).json({
+            return res.json({
                 status: true,
                 message: "User image upload successfully.",
             });
         } catch (error) {
-            return res.status(200).json({
+            return res.status(422).json({
                 "status": false,
                 "message": error.message,
             });
@@ -157,7 +159,7 @@ class AuthSessionController {
                 message: "User image update successfully.",
             });
         } catch (error) {
-            return res.status(200).json({
+            return res.status(422).json({
                 "status": false,
                 "message": error.message,
             });
@@ -168,12 +170,12 @@ class AuthSessionController {
         try {
             const { _id } = req.body;
             await FileService.deleteFile(_id);
-            return res.status(200).json({
+            return res.json({
                 status: true,
                 message: "User image delete successfully.",
             });
         } catch (error) {
-            return res.status(200).json({
+            return res.status(422).json({
                 "status": false,
                 "message": error.message,
             });
@@ -192,9 +194,9 @@ class AuthSessionController {
                 data: images,
             });
         } catch (error) {
-            return res.status(200).json({
-                "status": false,
-                "message": error.message,
+            return res.status(422).json({
+                status: false,
+                message: error.message,
             });
         }
     }
@@ -205,13 +207,58 @@ class AuthSessionController {
                 await FileService.uploadFile(file, req.user._id, 'User');
             });
             return res.json({
-                "status": true,
-                "message": "Upload multiple images.",
+                status: true,
+                message: "Upload multiple images.",
             })
         } catch (error) {
-            return res.status(200).json({
-                "status": false,
-                "message": error.message,
+            return res.status(422).json({
+                status: false,
+                message: error.message,
+            });
+        }
+    }
+
+    static async updateMe(req, res) {
+        try {
+            const {first_name, last_name, gender, dob, religion, community, live, live_with_your_family, marital_status, diet, height, highest_qualification, college_name,  work_with,  income, about_yourself, hobbies} = req.body;
+            const user = await User.findByIdAndUpdate(req.user._id,{
+                first_name,
+                last_name,
+                gender,
+                dob,
+                religion,
+                community,
+                live,
+                live_with_your_family,
+                marital_status,
+                diet,
+                height,
+                highest_qualification,
+                college_name,
+                work_with,
+                income,
+                about_yourself,
+                hobbies
+            }, {
+                new: true,            // return the updated document
+                runValidators: true,  // validate before update
+            });
+
+            if (!user) {
+                return res.status(404).json({
+                    status: false,
+                    message: 'User not found'
+                });
+            }
+            return res.json({
+                status: true,
+                message: "Profile updated successfully.",
+                data: user
+            })
+        } catch (error) {
+            return res.status(422).json({
+                status: false,
+                message: error.message,
             });
         }
     }

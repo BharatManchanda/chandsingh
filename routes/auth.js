@@ -36,6 +36,7 @@ router.post('/register', registerValidator,  Validate, AuthSessionController.reg
 router.use(auth);
 router.post('/logout', AuthSessionController.logout);
 router.post('/get-me', AuthSessionController.getMe);
+router.post('/update-me', AuthSessionController.updateMe);
 
 router.post('/profile-image/', AuthSessionController.listImage)
 router.post('/profile-image/add', upload.single('image'), profileImageCreateValidator, Validate, AuthSessionController.addImage)
